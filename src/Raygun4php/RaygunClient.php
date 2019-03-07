@@ -6,6 +6,7 @@ namespace Raygun4php {
   require_once realpath(__DIR__ . '/Uuid.php');
 
   use Raygun4Php\Rhumsaa\Uuid\Uuid;
+  use Symfony\Component\Process\Process;
 
   class RaygunClient
   {
@@ -380,10 +381,11 @@ namespace Raygun4php {
           $curlOpts[] = "--proxy '" . $this->proxy . "'";
         }
         $cmd = "curl " . implode(' ', $curlOpts) . " 'https://api.raygun.io:443/entries' > /dev/null 2>&1 &";
-        $output = array();
-        $exit;
-        exec($cmd, $output, $exit);
-        return $exit;
+
+        $process = new Process($cmd);
+        $process->run();
+        return $process->getExitCode();
+
       }
       else
       {
